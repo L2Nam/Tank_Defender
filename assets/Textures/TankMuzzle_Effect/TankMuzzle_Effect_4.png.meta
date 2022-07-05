@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "69cf2169-fd9e-4ce9-972b-c686d8b5e5cf",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 64,
+  "height": 38,
+  "platformSettings": {},
+  "subMetas": {
+    "TankMuzzle_Effect_4": {
+      "ver": "1.0.6",
+      "uuid": "ae905627-7190-4558-b31a-8dcaf06164a9",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "69cf2169-fd9e-4ce9-972b-c686d8b5e5cf",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -0.5,
+      "offsetY": 2.5,
+      "trimX": 11,
+      "trimY": 4,
+      "width": 41,
+      "height": 25,
+      "rawWidth": 64,
+      "rawHeight": 38,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

@@ -60,6 +60,7 @@ export default class MainControl extends cc.Component {
     }
 
     start() {
+        // Cloud
         for (let i = 0; i < this.spCloud.length; i++) {
             this.spCloud[i].node.x = 1500 + 1500 * i;
             var maxY_Cloud = 600
@@ -67,6 +68,7 @@ export default class MainControl extends cc.Component {
             this.spCloud[i].node.y = 400 + Math.random() * (maxY_Cloud - minY_Cloud)
         }
 
+        // Aircraft
         for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
             this.Aircraft[i] = cc.instantiate(this.Aircraft_Prefab[i]);
             this.node.addChild(this.Aircraft[i])
@@ -86,6 +88,8 @@ export default class MainControl extends cc.Component {
 
     update(dt) {
         this.time += dt
+
+        // Tank_smoke
         for (let i = 0; i < this.spSmoke.length; i++) {
             this.spSmoke[i].node.x -= this.Smoke_speed;
             if (this.spSmoke[i].node.x <= -2000) {
@@ -93,6 +97,7 @@ export default class MainControl extends cc.Component {
             }
         }
 
+        // Cloud
         for (let i = 0; i < this.spCloud.length; i++) {
             this.spCloud[i].node.x -= this.Cloud_speed;
             if (this.spCloud[i].node.x <= -1000) {
@@ -103,6 +108,7 @@ export default class MainControl extends cc.Component {
             }
         }
 
+        // Aircraft
         for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
             if (this.is_right[i]) {
                 this.Aircraft[i].scaleX = 1;
@@ -145,6 +151,7 @@ export default class MainControl extends cc.Component {
         }
     }
 
+    // Bomb
     pos: cc.Vec2[] = []
     bomb: cc.Node[] = []
     throw_bomb() {
@@ -152,7 +159,7 @@ export default class MainControl extends cc.Component {
             this.bomb[i] = cc.instantiate(this.Bomb_Prefab)
             this.bomb[i].parent = this.node
             this.pos[i] = this.Aircraft[i].getPosition()
-            this.pos[i].y -= 70;
+            this.pos[i].y -= 70
             this.bomb[i].setPosition(this.pos[i])
         }
     }

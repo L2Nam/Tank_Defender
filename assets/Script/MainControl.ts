@@ -32,7 +32,7 @@ export default class MainControl extends cc.Component {
     Air_alti = []
     is_down = []
     is_right = []
-    time = 0
+    time = []
     time_bomb = 3
 
     @property([cc.Prefab])
@@ -41,6 +41,19 @@ export default class MainControl extends cc.Component {
 
     @property(cc.Prefab)
     Bomb_Prefab: cc.Prefab = null
+
+    // Bomb
+    // pos: cc.Vec2[] = []
+    // bomb: cc.Node[] = []
+    // throw_bomb() {
+    //     for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
+    //         this.bomb[i] = cc.instantiate(this.Bomb_Prefab)
+    //         this.bomb[i].parent = this.node
+    //         this.pos[i] = this.Aircraft[i].getPosition()
+    //         this.pos[i].y -= 70
+    //         this.bomb[i].setPosition(this.pos[i])
+    //     }
+    // }
 
 
     onLoad() {
@@ -83,11 +96,11 @@ export default class MainControl extends cc.Component {
             else {
                 this.Aircraft[i].x = -this.min_x - Math.random() * (this.max_x - this.min_x)
             }
+            this.time[i] = 0 + i * 0.3;
         }
     }
 
     update(dt) {
-        this.time += dt
 
         // Tank_smoke
         for (let i = 0; i < this.spSmoke.length; i++) {
@@ -110,6 +123,7 @@ export default class MainControl extends cc.Component {
 
         // Aircraft
         for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
+            this.time[i] += dt
             if (this.is_right[i]) {
                 this.Aircraft[i].scaleX = 1;
                 this.Aircraft[i].x -= this.Air_speed[i];
@@ -144,23 +158,14 @@ export default class MainControl extends cc.Component {
                 this.Aircraft[i].y -= 0.5;
             else
                 this.Aircraft[i].y += 0.5;
-            if (this.time >= this.time_bomb) {
-                this.time = 0
-                this.throw_bomb()
+            if (this.time[i] >= this.time_bomb) {
+                this.time[i] = 0
+                let bomb = cc.instantiate(this.Bomb_Prefab)
+                bomb.parent = this.node
+                let pos = this.Aircraft[i].getPosition()
+                pos.y -= 70
+                bomb.setPosition(pos)
             }
-        }
-    }
-
-    // Bomb
-    pos: cc.Vec2[] = []
-    bomb: cc.Node[] = []
-    throw_bomb() {
-        for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
-            this.bomb[i] = cc.instantiate(this.Bomb_Prefab)
-            this.bomb[i].parent = this.node
-            this.pos[i] = this.Aircraft[i].getPosition()
-            this.pos[i].y -= 70
-            this.bomb[i].setPosition(this.pos[i])
         }
     }
 

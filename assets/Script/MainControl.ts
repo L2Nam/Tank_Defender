@@ -42,22 +42,10 @@ export default class MainControl extends cc.Component {
     @property(cc.Prefab)
     Bomb_Prefab: cc.Prefab = null
 
-    // Bomb
-    // pos: cc.Vec2[] = []
-    // bomb: cc.Node[] = []
-    // throw_bomb() {
-    //     for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
-    //         this.bomb[i] = cc.instantiate(this.Bomb_Prefab)
-    //         this.bomb[i].parent = this.node
-    //         this.pos[i] = this.Aircraft[i].getPosition()
-    //         this.pos[i].y -= 70
-    //         this.bomb[i].setPosition(this.pos[i])
-    //     }
-    // }
-
-
     onLoad() {
         cc.director.getPhysicsManager().enabled = true;
+        var collisionManager = cc.director.getCollisionManager()
+        collisionManager.enabled = true;
 
         this.Button_Right = this.node.getChildByName("Button_Right").getComponent(cc.Button);
         this.Button_Left = this.node.getChildByName("Button_Left").getComponent(cc.Button);
@@ -170,11 +158,11 @@ export default class MainControl extends cc.Component {
     }
 
     touchStartBR() {
-        this.tank.setMOveLeft(false)
+        this.tank.setMoveLeft(false)
     }
 
     touchStartBL() {
-        this.tank.setMOveLeft(true)
+        this.tank.setMoveLeft(true)
     }
 
 

@@ -281,17 +281,17 @@
       }
     ],
     "_prefab": null,
-    "_opacity": 255,
+    "_opacity": 0,
     "_color": {
       "__type__": "cc.Color",
-      "r": 42,
-      "g": 21,
-      "b": 56,
+      "r": 255,
+      "g": 12,
+      "b": 31,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 2200,
+      "width": 12000,
       "height": 320
     },
     "_anchorPoint": {
@@ -416,7 +416,7 @@
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 2200,
+      "width": 12000,
       "height": 320
     },
     "_id": "41r9bzBQdNkIdKfCGnGk0M"
@@ -951,6 +951,9 @@
     },
     "tank_muzzle": {
       "__id__": 14
+    },
+    "BombA": {
+      "__uuid__": "98c147f0-0985-433f-8aca-84013a43178c"
     },
     "_id": "f0m8GRjeVCq5Teho4wUPtk"
   },
@@ -2242,7 +2245,7 @@
       "__id__": 2
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 51

@@ -7,9 +7,11 @@ export default class TankControl extends cc.Component {
     TIME_FIRE_MAX = 0.5
 
     @property(cc.Sprite)
-    tank: cc.Sprite = null;
+    tank: cc.Sprite = null
     @property(cc.Node)
-    tank_muzzle: cc.Node = null;
+    tank_muzzle: cc.Node = null
+    @property(cc.Prefab)
+    BombA: cc.Prefab = null
 
     speed = 0;
     time_run_fire = 0;
@@ -55,19 +57,18 @@ export default class TankControl extends cc.Component {
     }
 
     onBeginContact(contact, selfCollider, other: cc.PhysicsBoxCollider) {
-        console.log(other)
-        if (other && other.tag == 99) {
+        if (other.tag == 99) {
             other.enabled = false;
-            let rig = other.node.getComponent(cc.RigidBody)
-            rig.linearVelocity.y = 0
-            rig.gravityScale = 0;
-            let anim = other.node.getComponent(cc.Animation);
+            let pos = other.node.position
+            other.node.destroy();
+            let bombA = cc.instantiate(this.BombA)
+            bombA.parent = other.node.parent
+            let anim = bombA.getComponent(cc.Animation);
+            bombA.setPosition(pos)
             anim.play("Bomb_Tank_Anim");
-
             this.scheduleOnce(() => {
-                other.node.destroy();
+                bombA.destroy();
             }, anim.currentClip.duration / anim.currentClip.speed)
-            console.log(anim.currentClip.duration / anim.currentClip.speed)
         }
     }
 }

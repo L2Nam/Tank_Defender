@@ -79,11 +79,7 @@ export default class TankControl extends cc.Component {
             other.node.destroy();
             let bombA = cc.instantiate(this.BombA)
             bombA.parent = other.node.parent
-<<<<<<< HEAD
             bombA.angle = Math.random() * 180
-=======
-            bombA.rotation = Math.random() * 180
->>>>>>> c9c2dee46c43e2b3e0a76bd8c0a7889dd8e85f34
             let anim = bombA.getComponent(cc.Animation);
             bombA.setPosition(pos)
             anim.play("Bomb_Tank_Anim");

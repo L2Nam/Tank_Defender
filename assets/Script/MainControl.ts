@@ -3,6 +3,12 @@ import TankControl from "./TankControl";
 
 const { ccclass, property } = cc._decorator;
 
+export enum GameStatus {
+    Game_Ready = 0,
+    Game_Playing,
+    Game_Over
+}
+
 @ccclass
 export default class MainControl extends cc.Component {
 
@@ -21,6 +27,16 @@ export default class MainControl extends cc.Component {
 
     Button_Right: cc.Button = null;
     Button_Left: cc.Button = null;
+
+    btnStart: cc.Button = null
+    game_logo: cc.Sprite = null
+    sun_light: cc.Sprite = null
+    game_over: cc.Sprite = null
+    is_sun_light = true
+    is_game_logo = true
+    is_game_over = false
+    scale_up = true
+    gameStatus: GameStatus = GameStatus.Game_Ready;
 
     max_alti = 500
     min_alti = 200
@@ -47,17 +63,33 @@ export default class MainControl extends cc.Component {
         var collisionManager = cc.director.getCollisionManager()
         collisionManager.enabled = true;
 
+        this.btnStart = this.node.getChildByName("Btn_Start").getComponent(cc.Button)
+        this.btnStart.node.on(cc.Node.EventType.TOUCH_END, this.touchStartBtn, this)
+        this.game_logo = this.node.getChildByName("Game_Logo").getComponent(cc.Sprite)
+        this.sun_light = this.node.getChildByName("Sun_Light").getComponent(cc.Sprite)
+        this.game_over = this.node.getChildByName("GameOver").getComponent(cc.Sprite)
+    }
+
+    touchStartBtn() {
+        this.btnStart.node.active = false
+        this.game_logo.node.active = false
+        this.sun_light.node.active = false
+        this.is_sun_light = false
+        this.is_game_logo = false
+
         this.Button_Right = this.node.getChildByName("Button_Right").getComponent(cc.Button);
         this.Button_Left = this.node.getChildByName("Button_Left").getComponent(cc.Button);
-
+        this.Button_Right.node.active = true
+        this.Button_Left.node.active = true
+        this.joyStick.node.active = true
         this.Button_Right.node.on(cc.Node.EventType.TOUCH_START, this.touchStartBR, this);
         this.Button_Left.node.on(cc.Node.EventType.TOUCH_START, this.touchStartBL, this);
         this.Button_Right.node.on(cc.Node.EventType.TOUCH_END, this.touchEndBR, this);
         this.Button_Left.node.on(cc.Node.EventType.TOUCH_END, this.touchEndBL, this);
         this.Button_Right.node.on(cc.Node.EventType.TOUCH_CANCEL, this.touchEndBR, this);
         this.Button_Left.node.on(cc.Node.EventType.TOUCH_CANCEL, this.touchEndBL, this);
-
         this.joyStick.setCallback(this.joyStickCallbackStart.bind(this), this.joyStickCallbackEnd.bind(this));
+        this.gameStatus = GameStatus.Game_Playing
     }
 
     start() {
@@ -90,7 +122,35 @@ export default class MainControl extends cc.Component {
 
     update(dt) {
 
-        // Tank_smoke
+        if (this.is_sun_light) {
+            this.sun_light.node.angle++;
+            if (this.sun_light.node.angle >= 360)
+                this.sun_light.node.angle = 0
+        }
+
+        if (this.is_game_logo) {
+            if (this.scale_up && this.game_logo.node.scale <= 1.05) {
+                this.game_logo.node.scale += 0.002
+            }
+            else this.scale_up = false
+            if (!this.scale_up && this.game_logo.node.scale >= 1) {
+                this.game_logo.node.scale -= 0.002
+            }
+            else this.scale_up = true
+        }
+
+        if (this.is_game_over) {
+            if (this.scale_up && this.game_over.node.scale <= 1.2) {
+                this.game_over.node.scale += 0.005
+            }
+            else this.scale_up = false
+            if (!this.scale_up && this.game_over.node.scale >= 1) {
+                this.game_over.node.scale -= 0.005
+            }
+            else this.scale_up = true
+        }
+
+        // Smoke
         for (let i = 0; i < this.spSmoke.length; i++) {
             this.spSmoke[i].node.x -= this.Smoke_speed;
             if (this.spSmoke[i].node.x <= -2000) {
@@ -107,6 +167,10 @@ export default class MainControl extends cc.Component {
                 var minY_Cloud = 400
                 this.spCloud[i].node.y = 400 + Math.random() * (maxY_Cloud - minY_Cloud)
             }
+        }
+
+        if (this.gameStatus != GameStatus.Game_Playing) {
+            return;
         }
 
         // Aircraft
@@ -155,6 +219,21 @@ export default class MainControl extends cc.Component {
                 bomb.setPosition(pos)
             }
         }
+    }
+
+    gameOver() {
+        this.game_over.node.active = true
+        this.gameStatus = GameStatus.Game_Over;
+        this.is_game_over = true
+        for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
+            this.Aircraft[i].destroy()
+        }
+        this.Button_Right.node.active = false
+        this.Button_Left.node.active = false
+        this.joyStick.node.active = false
+        this.scheduleOnce(() => {
+            this.tank.node.active = false
+        }, 1)
     }
 
     touchStartBR() {

@@ -16,7 +16,7 @@ export default class TankControl extends cc.Component {
     @property(cc.Prefab)
     BombA: cc.Prefab = null
 
-    life = 1;
+    life = 3;
     speed = 0;
     time_run_fire = 0;
     is_fire = false

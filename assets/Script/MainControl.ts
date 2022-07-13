@@ -15,6 +15,7 @@ export default class MainControl extends cc.Component {
 
     @property(TankControl)
     tank: TankControl = null;
+
     @property(Joystick)
     joyStick: Joystick = null
 
@@ -32,6 +33,7 @@ export default class MainControl extends cc.Component {
     btnStart: cc.Button = null
     btnPause: cc.Button = null
     btnReturn: cc.Button = null
+    btnReplay: cc.Button = null
     game_logo: cc.Sprite = null
     sun_light: cc.Sprite = null
     game_over: cc.Sprite = null
@@ -41,6 +43,7 @@ export default class MainControl extends cc.Component {
     scale_up = true
     gameStatus: GameStatus = GameStatus.Game_Ready;
     Infor: cc.Node = null
+
 
     max_alti = 500
     min_alti = 200
@@ -54,6 +57,7 @@ export default class MainControl extends cc.Component {
     is_right = []
     time = []
     time_bomb = 3
+    life_const = 0//this.tank.life
 
     tank_life: cc.Sprite[] = []
 
@@ -72,9 +76,11 @@ export default class MainControl extends cc.Component {
         this.btnStart = this.node.getChildByName("Btn_Start").getComponent(cc.Button)
         this.btnPause = this.node.getChildByName("Btn_Pause").getComponent(cc.Button)
         this.btnReturn = this.node.getChildByName("Btn_Return").getComponent(cc.Button)
+        this.btnReplay = this.node.getChildByName("Btn_Replay").getComponent(cc.Button)
         this.btnStart.node.on(cc.Node.EventType.TOUCH_END, this.touchStartBtn, this)
         this.btnPause.node.on(cc.Node.EventType.TOUCH_END, this.touchPauseBtn, this)
         this.btnReturn.node.on(cc.Node.EventType.TOUCH_END, this.touchReturnBtn, this)
+        this.btnReplay.node.on(cc.Node.EventType.TOUCH_END, this.touchReplayBtn, this)
         this.game_logo = this.node.getChildByName("Game_Logo").getComponent(cc.Sprite)
         this.sun_light = this.node.getChildByName("Sun_Light").getComponent(cc.Sprite)
         this.game_over = this.node.getChildByName("GameOver").getComponent(cc.Sprite)
@@ -83,6 +89,7 @@ export default class MainControl extends cc.Component {
         this.tank_life[1] = this.Infor.getChildByName("x1").getComponent(cc.Sprite)
         this.tank_life[2] = this.Infor.getChildByName("x2").getComponent(cc.Sprite)
         this.tank_life[3] = this.Infor.getChildByName("x3").getComponent(cc.Sprite)
+        this.life_const = this.tank.life
     }
 
     start() {
@@ -94,23 +101,7 @@ export default class MainControl extends cc.Component {
             this.spCloud[i].node.y = 400 + Math.random() * (maxY_Cloud - minY_Cloud)
         }
 
-        // Aircraft
-        for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
-            this.Aircraft[i] = cc.instantiate(this.Aircraft_Prefab[i]);
-            this.node.addChild(this.Aircraft[i])
-            this.Air_alti[i] = Math.random() * (this.max_alti - this.min_alti) + this.min_alti
-            this.Aircraft[i].y = this.Air_alti[i];
-            this.is_down[i] = Math.random() < 0.5 ? true : false
-            this.is_right[i] = Math.random() < 0.5 ? true : false
-            this.Air_speed[i] = this.min_speed + Math.random() * (this.max_speed - this.min_speed)
-            if (this.is_right[i]) {
-                this.Aircraft[i].x = this.min_x + Math.random() * (this.max_x - this.min_x)
-            }
-            else {
-                this.Aircraft[i].x = -this.min_x - Math.random() * (this.max_x - this.min_x)
-            }
-            this.time[i] = 0 + i * 0.3;
-        }
+        this.Make_Aircraft()
     }
 
     update(dt) {
@@ -143,11 +134,6 @@ export default class MainControl extends cc.Component {
             else this.scale_up = true
         }
 
-        if (this.tank.life < 3) {
-            this.tank_life[this.tank.life].node.active = true;
-            this.tank_life[this.tank.life + 1].node.active = false;
-        }
-
         if (this.tank.life == 0)
             this.Infor.opacity--
 
@@ -172,6 +158,11 @@ export default class MainControl extends cc.Component {
 
         if (this.gameStatus != GameStatus.Game_Playing) {
             return;
+        }
+
+        if (this.tank.life < this.life_const) {
+            this.tank_life[this.tank.life].node.active = true;
+            this.tank_life[this.tank.life + 1].node.active = false;
         }
 
         // Aircraft
@@ -244,6 +235,7 @@ export default class MainControl extends cc.Component {
         this.Button_Left.node.on(cc.Node.EventType.TOUCH_CANCEL, this.touchEndBL, this);
         this.joyStick.setCallback(this.joyStickCallbackStart.bind(this), this.joyStickCallbackEnd.bind(this));
         this.gameStatus = GameStatus.Game_Playing
+        this.tank_life[this.life_const].node.active = true;
     }
 
     touchPauseBtn() {
@@ -260,6 +252,22 @@ export default class MainControl extends cc.Component {
         this.btnReturn.node.active = false
     }
 
+    touchReplayBtn() {
+        this.Make_Aircraft()
+        this.gameStatus = GameStatus.Game_Playing
+        this.Button_Right.node.active = true
+        this.Button_Left.node.active = true
+        this.joyStick.node.active = true
+        this.btnPause.node.active = true
+        this.Infor.active = true
+        this.game_over.node.active = false
+        this.btnReplay.node.active = false
+        this.tank.node.active = true
+        this.tank_life[0].node.active = false
+        this.tank_life[3].node.active = true
+        this.tank.resetToDefault();
+        this.Infor.opacity = 255
+    }
 
     gameOver() {
         this.game_over.node.active = true
@@ -274,13 +282,28 @@ export default class MainControl extends cc.Component {
         this.btnPause.node.active = false
         this.scheduleOnce(() => {
             this.Infor.active = false
-        }, 2.5)
-        let anim = this.tank.tank.node.getComponent(cc.Animation);
-        this.tank.tank_muzzle.active = false
-        anim.play("Tank_Die_Anim")
-        this.scheduleOnce(() => {
-            this.tank.node.active = false
-        }, 1)
+            this.btnReplay.node.active = true
+        }, 2.2)
+        this.tank.setDie();
+    }
+
+    Make_Aircraft() {
+        for (let i = 0; i < this.Aircraft_Prefab.length; i++) {
+            this.Aircraft[i] = cc.instantiate(this.Aircraft_Prefab[i]);
+            this.node.addChild(this.Aircraft[i])
+            this.Air_alti[i] = Math.random() * (this.max_alti - this.min_alti) + this.min_alti
+            this.Aircraft[i].y = this.Air_alti[i];
+            this.is_down[i] = Math.random() < 0.5 ? true : false
+            this.is_right[i] = Math.random() < 0.5 ? true : false
+            this.Air_speed[i] = this.min_speed + Math.random() * (this.max_speed - this.min_speed)
+            if (this.is_right[i]) {
+                this.Aircraft[i].x = this.min_x + Math.random() * (this.max_x - this.min_x)
+            }
+            else {
+                this.Aircraft[i].x = -this.min_x - Math.random() * (this.max_x - this.min_x)
+            }
+            this.time[i] = 0 + i * 0.3;
+        }
     }
 
     touchStartBR() {

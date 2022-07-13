@@ -16,6 +16,9 @@ export default class TankControl extends cc.Component {
     @property(cc.Prefab)
     BombA: cc.Prefab = null
 
+    @property(cc.Animation)
+    animation: cc.Animation = null
+
     life = 3;
     speed = 0;
     time_run_fire = 0;
@@ -87,5 +90,26 @@ export default class TankControl extends cc.Component {
                 bombA.destroy();
             }, anim.currentClip.duration / anim.currentClip.speed)
         }
+    }
+
+    resetToDefault() {
+        this.node.active = true;
+        this.tank_muzzle.active = true
+        this.animation.play("Tank_Anim")
+        this.life = 3;
+        this.speed = 0;
+        this.time_run_fire = 0;
+        this.is_fire = false
+        this.is_move_left = true;
+    }
+
+    setDie() {
+
+        this.speed = 0;
+        this.tank_muzzle.active = false
+        this.animation.play("Tank_Die_Anim")
+        this.scheduleOnce(() => {
+            this.node.active = false
+        }, 1)
     }
 }

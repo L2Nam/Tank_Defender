@@ -7,7 +7,7 @@ export default class TankControl extends cc.Component {
     mainControl: MainControl = null;
 
     SPEED_DEFAULT = 8
-    TIME_FIRE_MAX = 0.5
+    TIME_FIRE_MAX = 0.4
 
     @property(cc.Sprite)
     tank: cc.Sprite = null
@@ -15,6 +15,13 @@ export default class TankControl extends cc.Component {
     tank_muzzle: cc.Node = null
     @property(cc.Prefab)
     BombA: cc.Prefab = null
+
+    @property(cc.Prefab)
+    bulletPrefab: cc.Prefab = null
+    @property(cc.Node)
+    parentBullet: cc.Node = null
+    @property(cc.Node)
+    posBullet: cc.Node = null
 
     @property(cc.Animation)
     animation: cc.Animation = null
@@ -27,6 +34,9 @@ export default class TankControl extends cc.Component {
 
     onLoad() {
         this.mainControl = cc.Canvas.instance.node.getComponent("MainControl");
+        cc.log('hhhhhhhh', cc.winSize);
+        this.node.width = cc.winSize.width
+        this.node.height = cc.winSize.height
     }
 
     update(dt) {
@@ -46,6 +56,22 @@ export default class TankControl extends cc.Component {
         }
         if (this.life <= 0) {
             this.mainControl.gameOver()
+        }
+
+        if (this.is_fire) {
+            this.time_run_fire += dt;
+            if (this.time_run_fire >= this.TIME_FIRE_MAX) {
+                this.time_run_fire = 0;
+                // make_bullet
+                let bullet = cc.instantiate(this.bulletPrefab)
+                bullet.parent = this.parentBullet;
+                bullet.angle = this.tank_muzzle.angle;
+                let posW = this.parentBullet.convertToNodeSpaceAR(this.tank_muzzle.convertToWorldSpaceAR(this.posBullet.position))
+                bullet.position = posW;
+                const radians = (bullet.angle + 90) * Math.PI / 180;
+                const ball_speed = 1300
+                bullet.getComponent(cc.RigidBody).linearVelocity = cc.v2(Math.sin(radians) * ball_speed, Math.abs(Math.cos(radians) * ball_speed));
+            }
         }
     }
 

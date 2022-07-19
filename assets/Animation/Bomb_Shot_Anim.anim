@@ -1,11 +1,11 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "Bomb_Tank_Anim",
+  "_name": "Bomb_Shot_Anim",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 0.15,
+  "_duration": 0.16666666666666666,
   "sample": 60,
-  "speed": 0.15,
+  "speed": 0.17,
   "wrapMode": 1,
   "curveData": {
     "comps": {
@@ -63,6 +63,12 @@
             "frame": 0.13333333333333333,
             "value": {
               "__uuid__": "08f2c181-a1d0-434c-9372-14caa15167b5"
+            }
+          },
+          {
+            "frame": 0.15,
+            "value": {
+              "__uuid__": "a03ad6f1-9761-4ad8-886c-b1f3aadafbb7"
             }
           }
         ]

@@ -47,7 +47,7 @@ export default class MainControl extends cc.Component {
 
     max_alti = 500
     min_alti = 200
-    max_x = 6000
+    max_x = 4000
     min_x = 1500
     min_speed = 3
     max_speed = 10
@@ -57,7 +57,7 @@ export default class MainControl extends cc.Component {
     is_right = []
     time = []
     time_bomb = 3
-    life_const = 0//this.tank.life
+    life_const = 0
 
     tank_life: cc.Sprite[] = []
 
@@ -69,6 +69,10 @@ export default class MainControl extends cc.Component {
     Bomb_Prefab: cc.Prefab = null
 
     onLoad() {
+        cc.log('hhhhhhhh', cc.winSize);
+        this.node.width = cc.winSize.width
+        this.node.height = cc.winSize.height
+
         cc.director.getPhysicsManager().enabled = true;
         var collisionManager = cc.director.getCollisionManager()
         collisionManager.enabled = true
@@ -209,6 +213,8 @@ export default class MainControl extends cc.Component {
                 let pos = this.Aircraft[i].getPosition()
                 pos.y -= 70
                 bomb.setPosition(pos)
+                if (bomb.y <= - 800)
+                    bomb.destroy()
             }
         }
     }

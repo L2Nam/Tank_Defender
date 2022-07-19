@@ -40,10 +40,10 @@ export default class Joystick extends cc.Component {
         this.Stick.setPosition(pos);
 
         let angel = Math.atan2(this.dir.y, this.dir.x) * 180 / Math.PI;
-        if (angel >= -90 && angel <= -10)
-            angel = -10;
-        if (angel >= -170 && angel < -90)
-            angel = -170;
+        if (angel >= -90 && angel <= 0)
+            angel = 0;
+        if (angel >= -180 && angel < -90)
+            angel = -180;
         if (this.callback_start) this.callback_start(angel);
     }
 
